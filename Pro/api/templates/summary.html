@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>⚙ Chemical Equipment Parameter Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <h1 class="text-center mb-5">⚙ Equipment Summary Dashboard</h1>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6>Total Count</h6>
+                    <h3>{{ total_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6>Avg. Flowrate</h6>
+                    <h3>{{ avg_flowrate }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6>Avg. Pressure</h6>
+                    <h3>{{ avg_pressure }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6>Avg. Temperature</h6>
+                    <h3>{{ avg_temperature }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Type Distribution Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white">
+            Equipment Type Distribution
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered text-center">
+                <thead class="table-success">
+                    <tr>
+                        <th>Type</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for type, count in type_distribution.items %}
+                    <tr>
+                        <td>{{ type }}</td>
+                        <td>{{ count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            Distribution Chart
+        </div>
+        <div class="card-body">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const labels = JSON.parse('{{ types_json|escapejs }}');
+    const values = JSON.parse('{{ counts_json|escapejs }}');
+
+    const ctx = document.getElementById('chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Equipment Count',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+
+</body>
+</html>
